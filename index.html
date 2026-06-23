@@ -105,10 +105,11 @@
     }
     .block-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .block-label { font-size: 12px; color: #888; }
-    .blocks-row { display: flex; flex-wrap: wrap; gap: 4px; max-width: 140px; }
+    .blocks-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .blocks-row.grouped { max-width: 176px; }
     .block {
-      width: 20px; height: 20px;
-      border-radius: 4px;
+      width: 32px; height: 32px;
+      border-radius: 6px;
       border: 2px solid transparent;
       transition: opacity 0.2s, transform 0.15s;
     }
@@ -251,7 +252,8 @@
       g1.appendChild(row1); g1.appendChild(l1); area.appendChild(g1);
     }
     var g2 = document.createElement('div'); g2.className = 'block-group';
-    var row2 = document.createElement('div'); row2.className = 'blocks-row';
+    var row2 = document.createElement('div');
+    row2.className = 'blocks-row' + (state.borrowed ? ' grouped' : '');
     var totalOnes = state.ones + (state.borrowed ? 10 : 0);
     var bOnes = state.b % 10;
     for (var j = 0; j < totalOnes; j++) {
