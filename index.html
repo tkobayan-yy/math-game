@@ -261,6 +261,9 @@
       var isBorrowed = state.borrowed && j < 10;
       var isCrossed = state.answered && j >= (totalOnes - bOnes);
       b2.className = 'block one' + (isBorrowed ? ' borrowed' : '') + (isCrossed ? ' crossed' : '');
+      b2.addEventListener('click', function() {
+        if (!state.answered) this.classList.toggle('crossed');
+      });
       row2.appendChild(b2);
     }
     var l2 = document.createElement('div'); l2.className = 'block-label'; l2.textContent = '1のくらい';
