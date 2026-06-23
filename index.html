@@ -302,9 +302,9 @@
       fb.className = 'feedback correct';
       document.getElementById('stars-display').textContent = '★★★';
       state.answered = true;
-      document.getElementById('next-btn').style.display = '';
       renderBlocks();
       if (state.correct % 5 === 0 && state.level < 3) { state.level++; }
+      setTimeout(function() { nextQuestion(); }, 1500);
     } else if (!isNaN(val)) {
       fb.textContent = 'もういちど！ ヒントを見てみよう';
       fb.className = 'feedback wrong';
