@@ -52,19 +52,19 @@
     }
     .num-big { font-size: 56px; font-weight: bold; color: #222; }
     .num-op { font-size: 40px; color: #666; }
-    .answer-input {
-      font-size: 56px;
+    .answer-select {
+      font-size: 48px;
       font-weight: bold;
-      width: 90px;
+      width: 80px;
       text-align: center;
       border: 3px solid #aad4f5;
       border-radius: 12px;
       background: white;
       color: #1a5fa8;
-      padding: 0 6px;
-      -webkit-appearance: none;
+      padding: 4px 2px;
+      -webkit-appearance: auto;
     }
-    .answer-input:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 4px rgba(55,138,221,0.2); }
+    .answer-select:focus { outline: none; border-color: #378ADD; box-shadow: 0 0 0 4px rgba(55,138,221,0.2); }
 
     .feedback {
       font-size: 22px;
@@ -184,7 +184,7 @@
   <span class="num-op">－</span>
   <span class="num-big" id="num-b">7</span>
   <span class="num-op">=</span>
-  <input class="answer-input" type="number" id="answer-input" min="0" max="99" inputmode="numeric" placeholder="?" />
+  <select class="answer-select" id="answer-select"></select>
 </div>
 
 <div class="feedback" id="feedback"></div>
@@ -196,7 +196,10 @@
 <div class="section-title">ブロックで考えよう</div>
 <div class="block-area" id="block-area"></div>
 
-<button class="borrow-btn" id="borrow-btn" onclick="doBorrow()">じゅうのくらいから 1つかりる</button>
+<div style="display:flex; gap:8px; margin-bottom:8px;">
+  <button class="borrow-btn" id="borrow-btn" onclick="doBorrow()" style="flex:1">じゅうのくらいから 1つかりる</button>
+  <button class="borrow-btn" id="return-btn" onclick="doReturn()" style="flex:1; background:#fde8e8; color:#7d0000; border-color:#e08080;" disabled>かりたのを もどす</button>
+</div>
 
 <div class="btn-row">
   <button class="btn-check" onclick="checkAnswer()">こたえをかくにん</button>
@@ -205,6 +208,15 @@
 
 <script>
   var state = { a:0, b:0, tens:0, ones:0, borrowed:false, correct:0, total:0, level:1, answered:false };
+
+  function buildSelects() {
+    var s = document.getElementById('answer-select');
+    s.innerHTML = '';
+    for (var i = 0; i <= 99; i++) {
+      var o = document.createElement('option'); o.value = i; o.textContent = i;
+      s.appendChild(o);
+    }
+  }
 
   var problems = {
     1: [[11,2],[12,3],[13,4],[14,5],[15,6],[16,7],[17,8],[11,3],[12,4],[13,5],[14,6],[15,7],[16,8],[17,9]],
@@ -226,11 +238,12 @@
   function renderProblem() {
     document.getElementById('num-a').textContent = state.a;
     document.getElementById('num-b').textContent = state.b;
-    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-select').value = 0;
     document.getElementById('feedback').textContent = '';
     document.getElementById('feedback').className = 'feedback';
     document.getElementById('next-btn').style.display = 'none';
     document.getElementById('borrow-btn').disabled = (state.ones >= state.b % 10 || state.tens === 0);
+    document.getElementById('return-btn').disabled = true;
     document.getElementById('stars-display').textContent = '';
     document.getElementById('level-badge').textContent = 'レベル' + state.level;
     renderBlocks(); updateHint();
@@ -274,6 +287,15 @@
     if (state.borrowed || state.tens <= 0) return;
     state.tens -= 1; state.borrowed = true;
     document.getElementById('borrow-btn').disabled = true;
+    document.getElementById('return-btn').disabled = false;
+    renderBlocks(); updateHint();
+  }
+
+  function doReturn() {
+    if (!state.borrowed) return;
+    state.tens += 1; state.borrowed = false;
+    document.getElementById('borrow-btn').disabled = (state.ones >= state.b % 10 || state.tens === 0);
+    document.getElementById('return-btn').disabled = true;
     renderBlocks(); updateHint();
   }
 
@@ -295,7 +317,7 @@
 
   function checkAnswer() {
     if (state.answered) return;
-    var val = parseInt(document.getElementById('answer-input').value);
+    var val = parseInt(document.getElementById('answer-select').value);
     var correct = state.a - state.b;
     var fb = document.getElementById('feedback');
     state.total++;
@@ -319,10 +341,7 @@
 
   function nextQuestion() { genQuestion(); }
 
-  document.getElementById('answer-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') checkAnswer();
-  });
-
+  buildSelects();
   genQuestion();
 </script>
 </body>
